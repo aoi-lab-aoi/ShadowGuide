@@ -1,260 +1,194 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8">
 
 <meta
     name="viewport"
-    content="
-        width=device-width,
-        initial-scale=1.0,
-        viewport-fit=cover
-    "
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
 >
 
 <title>ShadowGuide</title>
 
-
 <style>
-
-
-/* =============================
-   基本
-============================= */
-
 
 html,
 body {
-
     margin: 0;
     padding: 0;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
-
     background: black;
-
     font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Helvetica Neue",
         Arial,
         sans-serif;
-
 }
-
 
 
 /* =============================
    カメラ
 ============================= */
 
-
 #camera {
-
     position: fixed;
-
     top: 0;
     left: 0;
-
     width: 100vw;
     height: 100vh;
-
     object-fit: cover;
-
     z-index: 0;
-
 }
-
 
 
 /* =============================
    操作パネル
 ============================= */
 
-
 #panel {
-
     position: fixed;
-
     z-index: 20;
-
     box-sizing: border-box;
-
-    background:
-        rgba(0, 0, 0, 0.72);
-
+    background: rgba(0, 0, 0, 0.72);
     color: white;
 
-    backdrop-filter:
-        blur(5px);
-
-    -webkit-backdrop-filter:
-        blur(5px);
-
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
-
-
-
-#topRow {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content:
-        space-between;
-
-    gap: 10px;
-
-}
-
 
 
 #title {
-
     font-size: 21px;
-
     font-weight: 700;
-
-    white-space: nowrap;
-
 }
 
 
+#actionButton {
+    margin-top: 10px;
 
-#buttons {
+    padding: 10px 15px;
 
-    display: flex;
-
-    gap: 8px;
-
-}
-
-
-
-button {
-
-    padding:
-        9px 13px;
+    width: 100%;
 
     border: none;
-
     border-radius: 9px;
 
     background: white;
-
     color: black;
 
-    font-size: 14px;
-
+    font-size: 15px;
     font-weight: 700;
-
-    white-space: nowrap;
-
 }
-
-
-
-button:disabled {
-
-    opacity: 0.4;
-
-}
-
 
 
 #status {
-
     margin-top: 8px;
 
     font-size: 13px;
-
     line-height: 1.4;
 
     opacity: 0.9;
-
 }
 
 
-
 /* =============================
-   結果表示
+   数値結果
 ============================= */
 
-
 #results {
-
     display: flex;
 
     gap: 16px;
 
-    margin-top: 8px;
-
+    margin-top: 10px;
 }
-
 
 
 .resultBox {
-
     min-width: 0;
-
 }
 
 
-
 .resultLabel {
-
     margin-bottom: 2px;
 
     font-size: 11px;
 
     opacity: 0.72;
-
 }
-
 
 
 .resultValue {
-
-    font-size: 19px;
-
+    font-size: 18px;
     font-weight: 700;
 
     white-space: nowrap;
-
 }
 
+
+/* =============================
+   判定結果
+============================= */
+
+#judgementBox {
+    display: none;
+
+    margin-top: 12px;
+
+    padding: 12px;
+
+    border: 2px solid white;
+    border-radius: 10px;
+
+    text-align: center;
+}
+
+
+#judgementLabel {
+    font-size: 12px;
+
+    opacity: 0.75;
+}
+
+
+#judgement {
+    margin-top: 4px;
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+
+#scoreDisplay {
+    margin-top: 4px;
+
+    font-size: 13px;
+
+    opacity: 0.8;
+}
 
 
 /* =============================
    評価領域
 ============================= */
 
-
 #evaluationArea {
-
     position: fixed;
 
     z-index: 10;
 
     box-sizing: border-box;
 
-    border:
-        4px solid yellow;
+    border: 4px solid yellow;
 
     pointer-events: none;
-
 }
 
 
-
 #areaLabel {
-
     position: absolute;
 
     top: -29px;
@@ -263,25 +197,20 @@ button:disabled {
     color: yellow;
 
     font-size: 16px;
-
     font-weight: 700;
 
     text-shadow:
         0 0 4px black,
         0 0 4px black,
         0 0 4px black;
-
 }
-
 
 
 /* =============================
    十字マーク
 ============================= */
 
-
 #crosshair {
-
     position: absolute;
 
     top: 50%;
@@ -290,15 +219,11 @@ button:disabled {
     width: 34px;
     height: 34px;
 
-    transform:
-        translate(-50%, -50%);
-
+    transform: translate(-50%, -50%);
 }
 
 
-
 #crosshair::before {
-
     content: "";
 
     position: absolute;
@@ -309,20 +234,15 @@ button:disabled {
     width: 100%;
     height: 2px;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
 
     background: red;
 
-    box-shadow:
-        0 0 3px black;
-
+    box-shadow: 0 0 3px black;
 }
 
 
-
 #crosshair::after {
-
     content: "";
 
     position: absolute;
@@ -333,258 +253,152 @@ button:disabled {
     width: 2px;
     height: 100%;
 
-    transform:
-        translateX(-50%);
+    transform: translateX(-50%);
 
     background: red;
 
-    box-shadow:
-        0 0 3px black;
-
+    box-shadow: 0 0 3px black;
 }
-
 
 
 /* =============================
    下部メッセージ
 ============================= */
 
-
 #message {
-
     position: fixed;
 
     z-index: 15;
 
     box-sizing: border-box;
 
-    padding:
-        8px 14px;
+    padding: 8px 14px;
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 
-    background:
-        rgba(0, 0, 0, 0.72);
+    background: rgba(0, 0, 0, 0.72);
 
     color: white;
 
     font-size: 16px;
-
     font-weight: 700;
 
     text-align: center;
 
     pointer-events: none;
-
 }
-
 
 
 /* =============================
    Canvas
 ============================= */
 
-
 #analysisCanvas {
-
     display: none;
-
 }
-
 
 
 /* =============================
    縦画面
 ============================= */
 
-
-@media
-(orientation: portrait) {
-
+@media (orientation: portrait) {
 
     #panel {
-
         top: 0;
         left: 0;
 
         width: 100%;
 
         padding:
-            calc(
-                10px +
-                env(safe-area-inset-top)
-            )
+            calc(10px + env(safe-area-inset-top))
             14px
             10px
             14px;
-
     }
-
 
 
     #evaluationArea {
-
-        width:
-            min(62vw, 280px);
-
-        height:
-            min(62vw, 280px);
+        width: min(62vw, 280px);
+        height: min(62vw, 280px);
 
         left: 50%;
+        top: 57%;
 
-        top: 55%;
-
-        transform:
-            translate(-50%, -50%);
-
+        transform: translate(-50%, -50%);
     }
 
 
-
     #message {
-
         left: 50%;
 
         top:
             calc(
-                55% +
+                57% +
                 min(31vw, 140px) +
                 18px
             );
 
-        transform:
-            translateX(-50%);
+        transform: translateX(-50%);
 
-        min-width:
-            220px;
-
+        min-width: 220px;
     }
 
 }
-
 
 
 /* =============================
    横画面
 ============================= */
 
-
-@media
-(orientation: landscape) {
-
+@media (orientation: landscape) {
 
     #panel {
-
         top: 0;
         left: 0;
 
         width: 250px;
-
         height: 100%;
 
         padding:
-            calc(
-                12px +
-                env(safe-area-inset-top)
-            )
+            calc(12px + env(safe-area-inset-top))
             14px
-            calc(
-                12px +
-                env(safe-area-inset-bottom)
-            )
-            calc(
-                14px +
-                env(safe-area-inset-left)
-            );
-
+            calc(12px + env(safe-area-inset-bottom))
+            calc(14px + env(safe-area-inset-left));
     }
-
-
-
-    #topRow {
-
-        display: block;
-
-    }
-
-
-
-    #buttons {
-
-        margin-top: 12px;
-
-        display: block;
-
-    }
-
-
-
-    button {
-
-        display: block;
-
-        width: 100%;
-
-        margin-bottom: 8px;
-
-    }
-
 
 
     #results {
-
         display: block;
-
-        margin-top: 14px;
-
     }
-
 
 
     .resultBox {
-
-        margin-bottom: 10px;
-
+        margin-bottom: 9px;
     }
 
 
-
     #evaluationArea {
-
-        width:
-            min(42vh, 270px);
-
-        height:
-            min(42vh, 270px);
+        width: min(42vh, 270px);
+        height: min(42vh, 270px);
 
         left:
             calc(
                 250px +
-                (
-                    100vw -
-                    250px
-                ) / 2
+                (100vw - 250px) / 2
             );
 
         top: 48%;
 
-        transform:
-            translate(-50%, -50%);
-
+        transform: translate(-50%, -50%);
     }
 
 
-
     #message {
-
         left:
             calc(
                 250px +
-                (
-                    100vw -
-                    250px
-                ) / 2
+                (100vw - 250px) / 2
             );
 
         top:
@@ -594,102 +408,72 @@ button:disabled {
                 18px
             );
 
-        transform:
-            translateX(-50%);
+        transform: translateX(-50%);
 
-        min-width:
-            220px;
-
+        min-width: 220px;
     }
 
 }
-
 
 
 /* =============================
    小型横画面
 ============================= */
 
-
 @media
 (orientation: landscape)
 and
 (max-height: 500px) {
 
-
     #panel {
-
         width: 220px;
-
     }
-
 
 
     #title {
-
         font-size: 18px;
-
     }
 
 
-
-    button {
-
-        padding:
-            7px 10px;
+    #actionButton {
+        padding: 7px 10px;
 
         font-size: 13px;
-
     }
-
 
 
     #status {
-
         font-size: 11px;
-
     }
-
 
 
     .resultValue {
-
         font-size: 16px;
-
     }
 
+
+    #judgement {
+        font-size: 20px;
+    }
 
 
     #evaluationArea {
-
-        width:
-            min(48vh, 220px);
-
-        height:
-            min(48vh, 220px);
+        width: min(48vh, 220px);
+        height: min(48vh, 220px);
 
         left:
             calc(
                 220px +
-                (
-                    100vw -
-                    220px
-                ) / 2
+                (100vw - 220px) / 2
             );
-
     }
 
 
-
     #message {
-
         left:
             calc(
                 220px +
-                (
-                    100vw -
-                    220px
-                ) / 2
+                (100vw - 220px) / 2
             );
 
         top: auto;
@@ -697,159 +481,99 @@ and
         bottom:
             calc(
                 8px +
-                env(
-                    safe-area-inset-bottom
-                )
+                env(safe-area-inset-bottom)
             );
 
-        padding:
-            6px 12px;
+        padding: 6px 12px;
 
-        font-size:
-            14px;
-
+        font-size: 14px;
     }
 
 }
 
-
 </style>
-
 </head>
-
 
 
 <body>
 
 
-
 <video
-
     id="camera"
-
     autoplay
-
     playsinline
-
     muted
-
 ></video>
-
 
 
 <div id="panel">
 
-
-    <div id="topRow">
-
-
-        <div id="title">
-
-            ShadowGuide
-
-        </div>
-
-
-
-        <div id="buttons">
-
-
-            <button
-                id="baselineButton"
-            >
-
-                基準を記録
-
-            </button>
-
-
-
-            <button
-
-                id="measureButton"
-
-                disabled
-
-            >
-
-                測定
-
-            </button>
-
-
-        </div>
-
-
+    <div id="title">
+        ShadowGuide
     </div>
 
+
+    <button id="actionButton">
+        基準を測定
+    </button>
 
 
     <div id="status">
-
-        ① 手とペンを外して基準を記録してください。
-
+        手とペンを外して基準を測定してください。
     </div>
-
 
 
     <div id="results">
 
-
         <div class="resultBox">
 
-
             <div class="resultLabel">
-
                 暗部面積率
-
             </div>
-
 
             <div
-
                 class="resultValue"
-
                 id="darkAreaRate"
-
             >
-
                 ---
-
             </div>
 
-
         </div>
-
 
 
         <div class="resultBox">
 
-
             <div class="resultLabel">
-
                 平均低下率
-
             </div>
-
 
             <div
-
                 class="resultValue"
-
                 id="averageDropRate"
-
             >
-
                 ---
-
             </div>
 
-
         </div>
-
 
     </div>
 
+
+    <div id="judgementBox">
+
+        <div id="judgementLabel">
+            暫定判定
+        </div>
+
+        <div id="judgement">
+            ---
+        </div>
+
+        <div id="scoreDisplay">
+            影響スコア：---
+        </div>
+
+    </div>
 
 </div>
 
@@ -857,38 +581,27 @@ and
 
 <div id="evaluationArea">
 
-
     <div id="areaLabel">
-
         評価領域
-
     </div>
 
-
-
     <div id="crosshair"></div>
-
 
 </div>
 
 
 
 <div id="message">
-
-    手・ペンなしで基準を記録
-
+    手・ペンなしで基準を測定
 </div>
 
 
 
-<canvas
-    id="analysisCanvas"
-></canvas>
+<canvas id="analysisCanvas"></canvas>
 
 
 
 <script>
-
 
 
 /* =============================
@@ -899,30 +612,31 @@ and
 /*
 
 基準画像より20%以上暗くなった画素を
-「暗部」と判定する。
-
-0.20 → 20%
-0.15 → 15%
-0.10 → 10%
+「暗部」と判定
 
 */
 
-const DARK_THRESHOLD =
-    0.20;
-
+const DARK_THRESHOLD = 0.20;
 
 
 /*
 
-解析画像サイズ。
-
-大きくすると精細になるが
-スマホ処理が重くなる。
+影響スコア判定
 
 */
 
-const ANALYSIS_SIZE =
-    180;
+const SMALL_SCORE_THRESHOLD = 10;
+
+const LARGE_SCORE_THRESHOLD = 25;
+
+
+/*
+
+解析画像サイズ
+
+*/
+
+const ANALYSIS_SIZE = 180;
 
 
 
@@ -932,92 +646,78 @@ const ANALYSIS_SIZE =
 
 
 const video =
-
-    document.getElementById(
-        "camera"
-    );
+    document.getElementById("camera");
 
 
 const evaluationArea =
-
-    document.getElementById(
-        "evaluationArea"
-    );
+    document.getElementById("evaluationArea");
 
 
 const canvas =
-
-    document.getElementById(
-        "analysisCanvas"
-    );
+    document.getElementById("analysisCanvas");
 
 
 const ctx =
-
     canvas.getContext(
-
         "2d",
-
         {
-
-            willReadFrequently:
-                true
-
+            willReadFrequently: true
         }
-
     );
 
 
-const baselineButton =
-
-    document.getElementById(
-        "baselineButton"
-    );
-
-
-const measureButton =
-
-    document.getElementById(
-        "measureButton"
-    );
+const actionButton =
+    document.getElementById("actionButton");
 
 
 const darkAreaRateDisplay =
-
-    document.getElementById(
-        "darkAreaRate"
-    );
+    document.getElementById("darkAreaRate");
 
 
 const averageDropRateDisplay =
-
-    document.getElementById(
-        "averageDropRate"
-    );
+    document.getElementById("averageDropRate");
 
 
 const statusDisplay =
-
-    document.getElementById(
-        "status"
-    );
+    document.getElementById("status");
 
 
 const messageDisplay =
+    document.getElementById("message");
 
-    document.getElementById(
-        "message"
-    );
+
+const judgementBox =
+    document.getElementById("judgementBox");
+
+
+const judgementDisplay =
+    document.getElementById("judgement");
+
+
+const scoreDisplay =
+    document.getElementById("scoreDisplay");
 
 
 
 /* =============================
-   データ
+   状態管理
 ============================= */
 
 
-let baselineBrightnessArray =
-    null;
+/*
+
+baseline
+↓
+measure
+↓
+result
+
+*/
+
+let currentState = "baseline";
+
+
+let baselineBrightnessArray = null;
 
 
 
@@ -1028,287 +728,185 @@ let baselineBrightnessArray =
 
 async function startCamera() {
 
-
     try {
 
-
         const stream =
-
             await navigator.mediaDevices
                 .getUserMedia({
 
-
                     video: {
 
-
                         facingMode: {
-
-                            ideal:
-                                "environment"
-
+                            ideal: "environment"
                         }
-
 
                     },
 
-
                     audio: false
-
 
                 });
 
 
-
-        video.srcObject =
-            stream;
-
+        video.srcObject = stream;
 
 
         await video.play();
 
-
-
     }
-
 
     catch(error) {
 
-
         alert(
-
             "カメラを起動できませんでした。\n" +
-
             "カメラの使用を許可してください。"
-
         );
 
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
     }
-
 
 }
 
 
 
 /* =============================
-   object-fit: cover 対応
-
-   画面上の評価領域
+   画面座標
    ↓
-   元のカメラ画像座標
+   カメラ元画像座標
+
+   object-fit: cover 対応
 ============================= */
 
 
-function screenRectToVideoRect(
-
-    screenRect
-
-) {
-
+function screenRectToVideoRect(screenRect) {
 
     const videoWidth =
-
         video.videoWidth;
 
 
     const videoHeight =
-
         video.videoHeight;
 
 
     const screenWidth =
-
         window.innerWidth;
 
 
     const screenHeight =
-
         window.innerHeight;
 
 
-
     const scale =
-
         Math.max(
 
-            screenWidth /
-            videoWidth,
+            screenWidth / videoWidth,
 
-            screenHeight /
-            videoHeight
+            screenHeight / videoHeight
 
         );
 
 
-
     const displayedWidth =
-
-        videoWidth *
-        scale;
+        videoWidth * scale;
 
 
     const displayedHeight =
-
-        videoHeight *
-        scale;
-
+        videoHeight * scale;
 
 
     const cropX =
-
         (
-
             displayedWidth -
-
             screenWidth
-
         ) / 2;
 
 
     const cropY =
-
         (
-
             displayedHeight -
-
             screenHeight
-
         ) / 2;
 
 
-
     let sourceX =
-
         (
-
             screenRect.left +
-
             cropX
-
         ) / scale;
 
 
     let sourceY =
-
         (
-
             screenRect.top +
-
             cropY
-
         ) / scale;
 
 
     let sourceWidth =
-
-        screenRect.width /
-        scale;
+        screenRect.width / scale;
 
 
     let sourceHeight =
-
-        screenRect.height /
-        scale;
-
+        screenRect.height / scale;
 
 
     sourceX =
-
         Math.max(
-
             0,
-
             Math.min(
-
                 sourceX,
-
                 videoWidth - 1
-
             )
-
         );
 
 
     sourceY =
-
         Math.max(
-
             0,
-
             Math.min(
-
                 sourceY,
-
                 videoHeight - 1
-
             )
-
         );
 
 
     sourceWidth =
-
         Math.min(
-
             sourceWidth,
-
-            videoWidth -
-            sourceX
-
+            videoWidth - sourceX
         );
 
 
     sourceHeight =
-
         Math.min(
-
             sourceHeight,
-
-            videoHeight -
-            sourceY
-
+            videoHeight - sourceY
         );
-
 
 
     return {
 
+        x: sourceX,
 
-        x:
-            sourceX,
+        y: sourceY,
 
+        width: sourceWidth,
 
-        y:
-            sourceY,
-
-
-        width:
-            sourceWidth,
-
-
-        height:
-            sourceHeight
-
+        height: sourceHeight
 
     };
-
 
 }
 
 
 
 /* =============================
-   評価領域画像を取得
+   評価領域画像取得
 ============================= */
 
 
 function captureEvaluationArea() {
-
 
     if (
 
@@ -1318,47 +916,33 @@ function captureEvaluationArea() {
 
     ) {
 
-
         return null;
-
 
     }
 
 
-
     const screenRect =
-
         evaluationArea
             .getBoundingClientRect();
 
 
-
     const sourceRect =
-
         screenRectToVideoRect(
-
             screenRect
-
         );
 
 
-
     canvas.width =
-
         ANALYSIS_SIZE;
 
 
     canvas.height =
-
         ANALYSIS_SIZE;
-
 
 
     ctx.drawImage(
 
-
         video,
-
 
         sourceRect.x,
 
@@ -1368,7 +952,6 @@ function captureEvaluationArea() {
 
         sourceRect.height,
 
-
         0,
 
         0,
@@ -1377,14 +960,11 @@ function captureEvaluationArea() {
 
         ANALYSIS_SIZE
 
-
     );
-
 
 
     return ctx.getImageData(
 
-
         0,
 
         0,
@@ -1393,9 +973,7 @@ function captureEvaluationArea() {
 
         ANALYSIS_SIZE
 
-
     );
-
 
 }
 
@@ -1406,20 +984,13 @@ function captureEvaluationArea() {
 ============================= */
 
 
-function imageDataToBrightnessArray(
-
-    imageData
-
-) {
-
+function imageDataToBrightnessArray(imageData) {
 
     const data =
-
         imageData.data;
 
 
     const brightnessArray =
-
         new Float32Array(
 
             ANALYSIS_SIZE *
@@ -1429,9 +1000,7 @@ function imageDataToBrightnessArray(
         );
 
 
-
     let pixelIndex = 0;
-
 
 
     for (
@@ -1443,7 +1012,6 @@ function imageDataToBrightnessArray(
         i += 4
 
     ) {
-
 
         const r =
             data[i];
@@ -1457,11 +1025,7 @@ function imageDataToBrightnessArray(
             data[i + 2];
 
 
-
-        brightnessArray[
-            pixelIndex
-        ] =
-
+        brightnessArray[pixelIndex] =
 
             0.2126 * r +
 
@@ -1470,102 +1034,120 @@ function imageDataToBrightnessArray(
             0.0722 * b;
 
 
-
         pixelIndex++;
-
 
     }
 
 
-
     return brightnessArray;
-
 
 }
 
 
 
 /* =============================
-   基準画像記録
+   1つのボタンで状態遷移
 ============================= */
 
 
-baselineButton
-    .addEventListener(
+actionButton.addEventListener(
 
-        "click",
+    "click",
 
-        () => {
-
-
-            const imageData =
-
-                captureEvaluationArea();
+    () => {
 
 
+        if (
+            currentState ===
+            "baseline"
+        ) {
 
-            if (!imageData) {
-
-
-                alert(
-
-                    "カメラ画像を取得できません。"
-
-                );
-
-
-                return;
-
-
-            }
-
-
-
-            baselineBrightnessArray =
-
-                imageDataToBrightnessArray(
-
-                    imageData
-
-                );
-
-
-
-            measureButton.disabled =
-
-                false;
-
-
-
-            darkAreaRateDisplay
-                .textContent =
-
-                "---";
-
-
-            averageDropRateDisplay
-                .textContent =
-
-                "---";
-
-
-
-            statusDisplay
-                .textContent =
-
-                "② ペン先を十字に合わせて書字姿勢をとり、「測定」を押してください。";
-
-
-
-            messageDisplay
-                .textContent =
-
-                "ペン先を十字に合わせて測定";
-
+            recordBaseline();
 
         }
 
-    );
+
+        else if (
+            currentState ===
+            "measure"
+        ) {
+
+            measureShadow();
+
+        }
+
+
+        else if (
+            currentState ===
+            "result"
+        ) {
+
+            resetForNextCondition();
+
+        }
+
+    }
+
+);
+
+
+
+/* =============================
+   基準測定
+============================= */
+
+
+function recordBaseline() {
+
+    const imageData =
+        captureEvaluationArea();
+
+
+    if (!imageData) {
+
+        alert(
+            "カメラ画像を取得できません。"
+        );
+
+        return;
+
+    }
+
+
+    baselineBrightnessArray =
+        imageDataToBrightnessArray(
+            imageData
+        );
+
+
+    currentState =
+        "measure";
+
+
+    actionButton.textContent =
+        "測定";
+
+
+    statusDisplay.textContent =
+        "ペン先を十字に合わせ、通常の書字姿勢をとってください。";
+
+
+    messageDisplay.textContent =
+        "ペン先を十字に合わせて測定";
+
+
+    judgementBox.style.display =
+        "none";
+
+
+    darkAreaRateDisplay.textContent =
+        "---";
+
+
+    averageDropRateDisplay.textContent =
+        "---";
+
+}
 
 
 
@@ -1574,79 +1156,61 @@ baselineButton
 ============================= */
 
 
-measureButton
-    .addEventListener(
+function measureShadow() {
 
-        "click",
+    if (
+        baselineBrightnessArray ===
+        null
+    ) {
 
-        () => {
+        return;
 
-
-            if (
-
-                baselineBrightnessArray ===
-                null
-
-            ) {
+    }
 
 
-                return;
+    const imageData =
+        captureEvaluationArea();
 
 
-            }
+    if (!imageData) {
+
+        alert(
+            "カメラ画像を取得できません。"
+        );
+
+        return;
+
+    }
 
 
-
-            const imageData =
-
-                captureEvaluationArea();
-
-
-
-            if (!imageData) {
+    const measuredBrightnessArray =
+        imageDataToBrightnessArray(
+            imageData
+        );
 
 
-                alert(
+    analyzeDifference(
 
-                    "カメラ画像を取得できません。"
+        baselineBrightnessArray,
 
-                );
-
-
-                return;
-
-
-            }
-
-
-
-            const measuredBrightnessArray =
-
-                imageDataToBrightnessArray(
-
-                    imageData
-
-                );
-
-
-
-            analyzeDifference(
-
-                baselineBrightnessArray,
-
-                measuredBrightnessArray
-
-            );
-
-
-        }
+        measuredBrightnessArray
 
     );
 
 
+    currentState =
+        "result";
+
+
+    actionButton.textContent =
+        "次の条件を測定";
+
+}
+
+
 
 /* =============================
-   基準画像と測定画像の比較
+   画像比較・判定
 ============================= */
 
 
@@ -1661,15 +1225,13 @@ function analyzeDifference(
 
     let darkPixelCount = 0;
 
-
     let darkPixelDropTotal = 0;
 
+    let validPixelCount = 0;
 
 
     const totalPixelCount =
-
         baseline.length;
-
 
 
     for (
@@ -1684,39 +1246,32 @@ function analyzeDifference(
 
 
         const baseBrightness =
-
             baseline[i];
 
 
         const measuredBrightness =
-
             measured[i];
-
 
 
         /*
 
-        極端に暗い基準画素では
-        割合計算が不安定なので除外
+        極端に暗い基準画素は除外
 
         */
 
         if (
-
             baseBrightness < 10
-
         ) {
 
-
             continue;
-
 
         }
 
 
+        validPixelCount++;
+
 
         const dropRate =
-
 
             (
 
@@ -1731,60 +1286,54 @@ function analyzeDifference(
             baseBrightness;
 
 
-
         if (
-
             dropRate >=
             DARK_THRESHOLD
-
         ) {
-
 
             darkPixelCount++;
 
 
             darkPixelDropTotal +=
-
                 dropRate;
 
-
         }
-
 
     }
 
 
 
-    const darkAreaRate =
-
-
-        darkPixelCount
-
-        /
-
-        totalPixelCount
-
-        *
-
-        100;
-
-
-
-    let averageDropRate =
-
-        0;
-
+    let darkAreaRate = 0;
 
 
     if (
-
-        darkPixelCount > 0
-
+        validPixelCount > 0
     ) {
 
+        darkAreaRate =
+
+            darkPixelCount
+
+            /
+
+            validPixelCount
+
+            *
+
+            100;
+
+    }
+
+
+
+    let averageDropRate = 0;
+
+
+    if (
+        darkPixelCount > 0
+    ) {
 
         averageDropRate =
-
 
             darkPixelDropTotal
 
@@ -1796,13 +1345,25 @@ function analyzeDifference(
 
             100;
 
-
     }
 
 
 
-    darkAreaRateDisplay
-        .textContent =
+    const influenceScore =
+
+        darkAreaRate
+
+        *
+
+        averageDropRate
+
+        /
+
+        100;
+
+
+
+    darkAreaRateDisplay.textContent =
 
         darkAreaRate
             .toFixed(1)
@@ -1813,8 +1374,7 @@ function analyzeDifference(
 
 
 
-    averageDropRateDisplay
-        .textContent =
+    averageDropRateDisplay.textContent =
 
         averageDropRate
             .toFixed(1)
@@ -1825,18 +1385,121 @@ function analyzeDifference(
 
 
 
-    statusDisplay
-        .textContent =
+    scoreDisplay.textContent =
 
-        "測定完了。照明位置を変える場合は、その条件で再度「基準を記録」してください。";
+        "影響スコア："
+
+        +
+
+        influenceScore
+            .toFixed(1);
 
 
 
-    messageDisplay
-        .textContent =
+    let judgementText;
 
-        "測定完了";
 
+
+    if (
+
+        influenceScore <
+
+        SMALL_SCORE_THRESHOLD
+
+    ) {
+
+        judgementText =
+            "影の影響：小";
+
+    }
+
+
+    else if (
+
+        influenceScore <
+
+        LARGE_SCORE_THRESHOLD
+
+    ) {
+
+        judgementText =
+            "影の影響：中";
+
+    }
+
+
+    else {
+
+        judgementText =
+            "影の影響：大";
+
+    }
+
+
+
+    judgementDisplay.textContent =
+        judgementText;
+
+
+
+    judgementBox.style.display =
+        "block";
+
+
+
+    statusDisplay.textContent =
+
+        "測定完了。結果を確認してください。";
+
+
+
+    messageDisplay.textContent =
+
+        judgementText +
+        "（暫定判定）";
+
+}
+
+
+
+/* =============================
+   次の条件
+============================= */
+
+
+function resetForNextCondition() {
+
+
+    baselineBrightnessArray =
+        null;
+
+
+    currentState =
+        "baseline";
+
+
+    actionButton.textContent =
+        "基準を測定";
+
+
+    statusDisplay.textContent =
+        "照明位置を変更し、手とペンを外して基準を測定してください。";
+
+
+    messageDisplay.textContent =
+        "手・ペンなしで基準を測定";
+
+
+    darkAreaRateDisplay.textContent =
+        "---";
+
+
+    averageDropRateDisplay.textContent =
+        "---";
+
+
+    judgementBox.style.display =
+        "none";
 
 }
 
@@ -1853,27 +1516,17 @@ window.addEventListener(
 
     () => {
 
-
         setTimeout(
 
             () => {
 
-
-                window.scrollTo(
-
-                    0,
-
-                    0
-
-                );
-
+                window.scrollTo(0, 0);
 
             },
 
             300
 
         );
-
 
     }
 
@@ -1889,10 +1542,7 @@ window.addEventListener(
 startCamera();
 
 
-
 </script>
 
-
 </body>
-
 </html>
