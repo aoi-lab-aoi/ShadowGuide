@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>ShadowGuide</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: black;
+    font-family: sans-serif;
+}
+
+#camera {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    object-fit: cover;
+}
+
+/* 評価領域 */
+
+#evaluationArea {
+    position: fixed;
+
+    width: 180px;
+    height: 180px;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border: 4px solid yellow;
+    box-sizing: border-box;
+
+    pointer-events: none;
+}
+
+/* 評価領域ラベル */
+
+#areaLabel {
+    position: absolute;
+
+    top: -32px;
+    left: 0;
+
+    color: yellow;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 4px black,
+        0 0 4px black;
+}
+
+/* 情報パネル */
+
+#panel {
+    position: fixed;
+
+    top: env(safe-area-inset-top, 0px);
+    left: 0;
+
+    width: 100%;
+
+    padding: 15px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    color: white;
+
+    z-index: 10;
+}
+
+#title {
+    font-size: 22px;
+    font-weight: bold;
+
+    margin-bottom: 10px;
+}
+
+.info {
+    font-size: 18px;
+    margin: 4px 0;
+}
+
+/* ボタン */
+
+#baselineButton {
+    margin-top: 10px;
+
+    padding: 12px 20px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    border: none;
+    border-radius: 10px;
+
+    background: white;
+    color: black;
+}
+
+/* 判定表示 */
+
+#shadowLevel {
+    margin-top: 10px;
+
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 説明 */
+
+#instruction {
+    position: fixed;
+
+    bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 90%;
+
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    color: white;
+
+    font-size: 15px;
+    text-align: center;
+
+    border-radius: 10px;
+}
+
+/* 画像解析用Canvas */
+
+#analysisCanvas {
+    display: none;
+}
+</style>
+</head>
+
+
+<body>
+
+
+<video
+    id="camera"
+    autoplay
+    playsinline
+    muted>
+</video>
+
+
+<div id="evaluationArea">
+    <div id="areaLabel">
+        評価領域
+    </div>
+</div>
+
+
+<div id="panel">
+
+    <div id="title">
+        ShadowGuide
+    </div>
+
+    <div class="info">
+        現在輝度：
+        <span id="currentBrightness">---</span>
+    </div>
+
+    <div class="info">
+        基準輝度：
+        <span id="baselineBrightness">未記録</span>
+    </div>
+
+    <div class="info">
+        輝度低下率：
+        <span id="dropRate">---</span>
+    </div>
+
+    <button id="baselineButton">
+        基準を記録
+    </button>
+
+    <div id="shadowLevel">
+        まず基準を記録してください
+    </div>
+
+</div>
+
+
+<div id="instruction">
+    黄色い評価領域に白い紙を映し、手を置いていない状態で「基準を記録」を押してください。
+</div>
+
+
+<canvas id="analysisCanvas"></canvas>
+
+
+<script>
+
+const video =
+    document.getElementById("camera");
+
+const canvas =
+    document.getElementById("analysisCanvas");
+
+const ctx =
+    canvas.getContext("2d", {
+        willReadFrequently: true
+    });
+
+
+const currentBrightnessDisplay =
+    document.getElementById("currentBrightness");
+
+const baselineBrightnessDisplay =
+    document.getElementById("baselineBrightness");
+
+const dropRateDisplay =
+    document.getElementById("dropRate");
+
+const baselineButton =
+    document.getElementById("baselineButton");
+
+const shadowLevelDisplay =
+    document.getElementById("shadowLevel");
+
+
+let currentBrightness = 0;
+
+let baselineBrightness = null;
+
+
+/* =============================
+
+カメラ起動
+
+============================= */
+
+
+async function startCamera() {
+
+    try {
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+
+                    facingMode: {
+                        ideal: "environment"
+                    },
+
+                    width: {
+                        ideal: 1920
+                    },
+
+                    height: {
+                        ideal: 1080
+                    }
+
+                },
+
+                audio: false
+
+            });
+
+
+        video.srcObject = stream;
+
+
+        await video.play();
+
+
+        requestAnimationFrame(analyzeBrightness);
+
+
+    }
+
+    catch(error) {
+
+        alert(
+            "カメラを起動できませんでした。\n" +
+            "カメラの使用を許可してください。"
+        );
+
+        console.error(error);
+
+    }
+
+}
+
+
+
+/* =============================
+
+平均輝度計算
+
+============================= */
+
+
+function calculateBrightness(imageData) {
+
+    const data =
+        imageData.data;
+
+
+    let totalBrightness = 0;
+
+    let pixelCount = 0;
+
+
+    /*
+
+    全画素を処理すると重いため
+    4画素ごとにサンプリング
+
+    */
+
+
+    for (
+        let i = 0;
+        i < data.length;
+        i += 16
+    ) {
+
+        const r = data[i];
+
+        const g = data[i + 1];
+
+        const b = data[i + 2];
+
+
+        /*
+
+        相対輝度の簡易計算
+
+        */
+
+        const brightness =
+
+            0.2126 * r +
+
+            0.7152 * g +
+
+            0.0722 * b;
+
+
+        totalBrightness += brightness;
+
+        pixelCount++;
+
+    }
+
+
+    return totalBrightness / pixelCount;
+
+}
+
+
+
+/* =============================
+
+リアルタイム解析
+
+============================= */
+
+
+function analyzeBrightness() {
+
+
+    if (
+
+        video.readyState >= 2 &&
+
+        video.videoWidth > 0
+
+    ) {
+
+
+        /*
+
+        解析サイズ
+
+        評価領域は画面中央なので
+
+        映像中央180×180相当を解析
+
+        */
+
+
+        const analysisSize = 180;
+
+
+        canvas.width = analysisSize;
+
+        canvas.height = analysisSize;
+
+
+        const sourceSize =
+
+            Math.min(
+
+                video.videoWidth,
+
+                video.videoHeight
+
+            ) * 0.3;
+
+
+        const sourceX =
+
+            (video.videoWidth - sourceSize) / 2;
+
+
+        const sourceY =
+
+            (video.videoHeight - sourceSize) / 2;
+
+
+        ctx.drawImage(
+
+            video,
+
+            sourceX,
+
+            sourceY,
+
+            sourceSize,
+
+            sourceSize,
+
+            0,
+
+            0,
+
+            analysisSize,
+
+            analysisSize
+
+        );
+
+
+        const imageData =
+
+            ctx.getImageData(
+
+                0,
+
+                0,
+
+                analysisSize,
+
+                analysisSize
+
+            );
+
+
+        currentBrightness =
+
+            calculateBrightness(imageData);
+
+
+        currentBrightnessDisplay.textContent =
+
+            currentBrightness.toFixed(1);
+
+
+        updateShadowEvaluation();
+
+    }
+
+
+    requestAnimationFrame(analyzeBrightness);
+
+}
+
+
+
+/* =============================
+
+基準記録
+
+============================= */
+
+
+baselineButton.addEventListener(
+
+    "click",
+
+    () => {
+
+
+        baselineBrightness =
+
+            currentBrightness;
+
+
+        baselineBrightnessDisplay.textContent =
+
+            baselineBrightness.toFixed(1);
+
+
+        shadowLevelDisplay.textContent =
+
+            "基準を記録しました";
+
+
+        dropRateDisplay.textContent =
+
+            "0.0 %";
+
+    }
+
+);
+
+
+
+/* =============================
+
+影評価
+
+============================= */
+
+
+function updateShadowEvaluation() {
+
+
+    if (baselineBrightness === null) {
+
+        return;
+
+    }
+
+
+    let dropRate =
+
+        (
+
+            baselineBrightness -
+
+            currentBrightness
+
+        )
+
+        /
+
+        baselineBrightness
+
+        *
+
+        100;
+
+
+    /*
+
+    明るくなった場合は0%
+
+    */
+
+    if (dropRate < 0) {
+
+        dropRate = 0;
+
+    }
+
+
+    dropRateDisplay.textContent =
+
+        dropRate.toFixed(1) + " %";
+
+
+
+    if (dropRate < 5) {
+
+
+        shadowLevelDisplay.textContent =
+
+            "影の影響：小";
+
+
+    }
+
+    else if (dropRate < 15) {
+
+
+        shadowLevelDisplay.textContent =
+
+            "影の影響：中";
+
+
+    }
+
+    else {
+
+
+        shadowLevelDisplay.textContent =
+
+            "影の影響：大";
+
+
+    }
+
+}
+
+
+
+/* =============================
+
+開始
+
+============================= */
+
+
+startCamera();
+
+
+</script>
+
+
+</body>
+</html>
