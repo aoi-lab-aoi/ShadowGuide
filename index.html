@@ -6,6 +6,44 @@
 
 <title>ShadowGuide</title>
 
+/* =============================
+   横画面対応
+============================= */
+
+@media (orientation: landscape) {
+
+    /* 情報パネルを左側に配置 */
+
+    #panel {
+        top: 0;
+        left: 0;
+
+        width: 300px;
+        height: 100vh;
+
+        padding: 15px;
+
+        overflow-y: auto;
+    }
+
+    /* 評価領域をパネルを除いた領域の中央へ */
+
+    #evaluationArea {
+        top: 50%;
+        left: calc(300px + (100vw - 300px) / 2);
+    }
+
+    /* 下部説明を右側領域に配置 */
+
+    #instruction {
+        left: calc(300px + (100vw - 300px) / 2);
+
+        width: calc(100vw - 340px);
+
+        bottom: 15px;
+    }
+}
+
 <style>
 html, body {
     margin: 0;
