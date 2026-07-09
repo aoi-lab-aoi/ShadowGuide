@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
     name="viewport"
-    content="width=device-width,
-             initial-scale=1.0,
-             viewport-fit=cover"
+    content="
+        width=device-width,
+        initial-scale=1.0,
+        viewport-fit=cover
+    "
 >
 
 <title>ShadowGuide</title>
 
+
 <style>
+
 
 /* =============================
    基本
 ============================= */
 
+
 html,
 body {
+
     margin: 0;
     padding: 0;
 
@@ -36,14 +44,18 @@ body {
         "Helvetica Neue",
         Arial,
         sans-serif;
+
 }
+
 
 
 /* =============================
    カメラ
 ============================= */
 
+
 #camera {
+
     position: fixed;
 
     top: 0;
@@ -55,112 +67,194 @@ body {
     object-fit: cover;
 
     z-index: 0;
+
 }
+
 
 
 /* =============================
    操作パネル
 ============================= */
 
+
 #panel {
+
     position: fixed;
 
     z-index: 20;
 
     box-sizing: border-box;
 
-    background: rgba(0, 0, 0, 0.72);
+    background:
+        rgba(0, 0, 0, 0.72);
 
     color: white;
 
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter:
+        blur(5px);
+
+    -webkit-backdrop-filter:
+        blur(5px);
+
 }
+
 
 
 #topRow {
+
     display: flex;
 
     align-items: center;
-    justify-content: space-between;
+
+    justify-content:
+        space-between;
 
     gap: 10px;
+
 }
+
 
 
 #title {
+
     font-size: 21px;
+
     font-weight: 700;
 
     white-space: nowrap;
+
 }
 
 
-#baselineButton {
-    padding: 9px 14px;
+
+#buttons {
+
+    display: flex;
+
+    gap: 8px;
+
+}
+
+
+
+button {
+
+    padding:
+        9px 13px;
 
     border: none;
+
     border-radius: 9px;
 
     background: white;
+
     color: black;
 
-    font-size: 15px;
+    font-size: 14px;
+
     font-weight: 700;
 
     white-space: nowrap;
+
 }
 
 
-#values {
-    display: flex;
+
+button:disabled {
+
+    opacity: 0.4;
+
+}
+
+
+
+#status {
 
     margin-top: 8px;
 
-    gap: 15px;
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    opacity: 0.9;
+
 }
 
 
-.valueBox {
+
+/* =============================
+   結果表示
+============================= */
+
+
+#results {
+
+    display: flex;
+
+    gap: 16px;
+
+    margin-top: 8px;
+
+}
+
+
+
+.resultBox {
+
     min-width: 0;
+
 }
 
 
-.valueLabel {
-    font-size: 11px;
 
-    opacity: 0.75;
+.resultLabel {
 
     margin-bottom: 2px;
+
+    font-size: 11px;
+
+    opacity: 0.72;
+
 }
 
 
-.value {
-    font-size: 18px;
-    font-weight: 600;
+
+.resultValue {
+
+    font-size: 19px;
+
+    font-weight: 700;
 
     white-space: nowrap;
+
 }
+
 
 
 /* =============================
    評価領域
 ============================= */
 
+
 #evaluationArea {
+
     position: fixed;
 
     z-index: 10;
 
     box-sizing: border-box;
 
-    border: 4px solid yellow;
+    border:
+        4px solid yellow;
 
     pointer-events: none;
+
 }
 
 
+
 #areaLabel {
+
     position: absolute;
 
     top: -29px;
@@ -169,332 +263,593 @@ body {
     color: yellow;
 
     font-size: 16px;
+
     font-weight: 700;
 
     text-shadow:
         0 0 4px black,
         0 0 4px black,
         0 0 4px black;
+
 }
 
 
+
 /* =============================
-   判定表示
+   十字マーク
 ============================= */
 
-#shadowLevel {
+
+#crosshair {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 34px;
+    height: 34px;
+
+    transform:
+        translate(-50%, -50%);
+
+}
+
+
+
+#crosshair::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    transform:
+        translateY(-50%);
+
+    background: red;
+
+    box-shadow:
+        0 0 3px black;
+
+}
+
+
+
+#crosshair::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: 2px;
+    height: 100%;
+
+    transform:
+        translateX(-50%);
+
+    background: red;
+
+    box-shadow:
+        0 0 3px black;
+
+}
+
+
+
+/* =============================
+   下部メッセージ
+============================= */
+
+
+#message {
+
     position: fixed;
 
     z-index: 15;
 
     box-sizing: border-box;
 
-    padding: 8px 14px;
+    padding:
+        8px 14px;
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
-    background: rgba(0, 0, 0, 0.72);
+    background:
+        rgba(0, 0, 0, 0.72);
 
     color: white;
 
-    font-size: 18px;
+    font-size: 16px;
+
     font-weight: 700;
 
     text-align: center;
 
     pointer-events: none;
+
 }
+
 
 
 /* =============================
    Canvas
 ============================= */
 
+
 #analysisCanvas {
+
     display: none;
+
 }
+
 
 
 /* =============================
    縦画面
 ============================= */
 
-@media (orientation: portrait) {
+
+@media
+(orientation: portrait) {
+
 
     #panel {
+
         top: 0;
         left: 0;
 
         width: 100%;
 
         padding:
-            calc(10px + env(safe-area-inset-top))
+            calc(
+                10px +
+                env(safe-area-inset-top)
+            )
             14px
             10px
             14px;
+
     }
+
 
 
     #evaluationArea {
-        width: min(62vw, 280px);
-        height: min(62vw, 280px);
+
+        width:
+            min(62vw, 280px);
+
+        height:
+            min(62vw, 280px);
 
         left: 50%;
-        top: 54%;
 
-        transform: translate(-50%, -50%);
+        top: 55%;
+
+        transform:
+            translate(-50%, -50%);
+
     }
 
 
-    #shadowLevel {
+
+    #message {
+
         left: 50%;
-        top: calc(54% + min(31vw, 140px) + 18px);
 
-        transform: translateX(-50%);
+        top:
+            calc(
+                55% +
+                min(31vw, 140px) +
+                18px
+            );
 
-        min-width: 180px;
+        transform:
+            translateX(-50%);
+
+        min-width:
+            220px;
+
     }
 
 }
+
 
 
 /* =============================
    横画面
 ============================= */
 
-@media (orientation: landscape) {
+
+@media
+(orientation: landscape) {
+
 
     #panel {
+
         top: 0;
         left: 0;
 
         width: 250px;
+
         height: 100%;
 
         padding:
-            calc(12px + env(safe-area-inset-top))
+            calc(
+                12px +
+                env(safe-area-inset-top)
+            )
             14px
-            calc(12px + env(safe-area-inset-bottom))
-            calc(14px + env(safe-area-inset-left));
+            calc(
+                12px +
+                env(safe-area-inset-bottom)
+            )
+            calc(
+                14px +
+                env(safe-area-inset-left)
+            );
+
     }
+
 
 
     #topRow {
+
         display: block;
+
     }
 
 
-    #baselineButton {
+
+    #buttons {
+
         margin-top: 12px;
 
-        width: 100%;
+        display: block;
+
     }
 
 
-    #values {
+
+    button {
+
+        display: block;
+
+        width: 100%;
+
+        margin-bottom: 8px;
+
+    }
+
+
+
+    #results {
+
         display: block;
 
         margin-top: 14px;
+
     }
 
 
-    .valueBox {
+
+    .resultBox {
+
         margin-bottom: 10px;
+
     }
 
-
-    .valueLabel {
-        font-size: 11px;
-    }
-
-
-    .value {
-        font-size: 19px;
-    }
 
 
     #evaluationArea {
-        width: min(42vh, 270px);
-        height: min(42vh, 270px);
 
-        left: calc(
-            250px +
-            (100vw - 250px) / 2
-        );
+        width:
+            min(42vh, 270px);
+
+        height:
+            min(42vh, 270px);
+
+        left:
+            calc(
+                250px +
+                (
+                    100vw -
+                    250px
+                ) / 2
+            );
 
         top: 48%;
 
-        transform: translate(-50%, -50%);
+        transform:
+            translate(-50%, -50%);
+
     }
 
 
-    #shadowLevel {
-        left: calc(
-            250px +
-            (100vw - 250px) / 2
-        );
 
-        top: calc(
-            48% +
-            min(21vh, 135px) +
-            18px
-        );
+    #message {
 
-        transform: translateX(-50%);
+        left:
+            calc(
+                250px +
+                (
+                    100vw -
+                    250px
+                ) / 2
+            );
 
-        min-width: 190px;
+        top:
+            calc(
+                48% +
+                min(21vh, 135px) +
+                18px
+            );
+
+        transform:
+            translateX(-50%);
+
+        min-width:
+            220px;
+
     }
 
 }
+
 
 
 /* =============================
-   小さい横画面
+   小型横画面
 ============================= */
+
 
 @media
 (orientation: landscape)
-and (max-height: 500px) {
+and
+(max-height: 500px) {
+
 
     #panel {
+
         width: 220px;
+
     }
+
 
 
     #title {
+
         font-size: 18px;
+
     }
 
 
-    #baselineButton {
-        padding: 7px 10px;
+
+    button {
+
+        padding:
+            7px 10px;
 
         font-size: 13px;
+
     }
 
 
-    #values {
-        margin-top: 8px;
+
+    #status {
+
+        font-size: 11px;
+
     }
 
 
-    .valueBox {
-        margin-bottom: 6px;
-    }
 
+    .resultValue {
 
-    .value {
         font-size: 16px;
+
     }
+
 
 
     #evaluationArea {
-        width: min(48vh, 220px);
-        height: min(48vh, 220px);
 
-        left: calc(
-            220px +
-            (100vw - 220px) / 2
-        );
+        width:
+            min(48vh, 220px);
+
+        height:
+            min(48vh, 220px);
+
+        left:
+            calc(
+                220px +
+                (
+                    100vw -
+                    220px
+                ) / 2
+            );
+
     }
 
 
-    #shadowLevel {
-        left: calc(
-            220px +
-            (100vw - 220px) / 2
-        );
+
+    #message {
+
+        left:
+            calc(
+                220px +
+                (
+                    100vw -
+                    220px
+                ) / 2
+            );
 
         top: auto;
-        bottom: calc(
-            8px +
-            env(safe-area-inset-bottom)
-        );
 
-        padding: 6px 12px;
+        bottom:
+            calc(
+                8px +
+                env(
+                    safe-area-inset-bottom
+                )
+            );
 
-        font-size: 15px;
+        padding:
+            6px 12px;
+
+        font-size:
+            14px;
+
     }
 
 }
 
+
 </style>
+
 </head>
+
 
 
 <body>
 
 
+
 <video
+
     id="camera"
+
     autoplay
+
     playsinline
-    muted>
-</video>
+
+    muted
+
+></video>
+
 
 
 <div id="panel">
 
+
     <div id="topRow">
 
+
         <div id="title">
+
             ShadowGuide
+
         </div>
 
-        <button id="baselineButton">
-            基準を記録
-        </button>
+
+
+        <div id="buttons">
+
+
+            <button
+                id="baselineButton"
+            >
+
+                基準を記録
+
+            </button>
+
+
+
+            <button
+
+                id="measureButton"
+
+                disabled
+
+            >
+
+                測定
+
+            </button>
+
+
+        </div>
+
 
     </div>
 
 
-    <div id="values">
 
-        <div class="valueBox">
+    <div id="status">
 
-            <div class="valueLabel">
-                現在輝度
-            </div>
-
-            <div
-                class="value"
-                id="currentBrightness">
-                ---
-            </div>
-
-        </div>
-
-
-        <div class="valueBox">
-
-            <div class="valueLabel">
-                基準輝度
-            </div>
-
-            <div
-                class="value"
-                id="baselineBrightness">
-                ---
-            </div>
-
-        </div>
-
-
-        <div class="valueBox">
-
-            <div class="valueLabel">
-                輝度低下率
-            </div>
-
-            <div
-                class="value"
-                id="dropRate">
-                ---
-            </div>
-
-        </div>
+        ① 手とペンを外して基準を記録してください。
 
     </div>
+
+
+
+    <div id="results">
+
+
+        <div class="resultBox">
+
+
+            <div class="resultLabel">
+
+                暗部面積率
+
+            </div>
+
+
+            <div
+
+                class="resultValue"
+
+                id="darkAreaRate"
+
+            >
+
+                ---
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="resultBox">
+
+
+            <div class="resultLabel">
+
+                平均低下率
+
+            </div>
+
+
+            <div
+
+                class="resultValue"
+
+                id="averageDropRate"
+
+            >
+
+                ---
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
 
 </div>
 
@@ -502,84 +857,167 @@ and (max-height: 500px) {
 
 <div id="evaluationArea">
 
+
     <div id="areaLabel">
+
         評価領域
+
     </div>
 
+
+
+    <div id="crosshair"></div>
+
+
 </div>
 
 
 
-<div id="shadowLevel">
+<div id="message">
 
-    基準を記録してください
+    手・ペンなしで基準を記録
 
 </div>
 
 
 
-<canvas id="analysisCanvas"></canvas>
+<canvas
+    id="analysisCanvas"
+></canvas>
 
 
 
 <script>
 
 
+
+/* =============================
+   予備実験用パラメータ
+============================= */
+
+
+/*
+
+基準画像より20%以上暗くなった画素を
+「暗部」と判定する。
+
+0.20 → 20%
+0.15 → 15%
+0.10 → 10%
+
+*/
+
+const DARK_THRESHOLD =
+    0.20;
+
+
+
+/*
+
+解析画像サイズ。
+
+大きくすると精細になるが
+スマホ処理が重くなる。
+
+*/
+
+const ANALYSIS_SIZE =
+    180;
+
+
+
+/* =============================
+   要素取得
+============================= */
+
+
 const video =
-    document.getElementById("camera");
+
+    document.getElementById(
+        "camera"
+    );
 
 
 const evaluationArea =
-    document.getElementById("evaluationArea");
+
+    document.getElementById(
+        "evaluationArea"
+    );
 
 
 const canvas =
-    document.getElementById("analysisCanvas");
+
+    document.getElementById(
+        "analysisCanvas"
+    );
 
 
 const ctx =
+
     canvas.getContext(
+
         "2d",
+
         {
-            willReadFrequently: true
+
+            willReadFrequently:
+                true
+
         }
-    );
 
-
-const currentBrightnessDisplay =
-    document.getElementById(
-        "currentBrightness"
-    );
-
-
-const baselineBrightnessDisplay =
-    document.getElementById(
-        "baselineBrightness"
-    );
-
-
-const dropRateDisplay =
-    document.getElementById(
-        "dropRate"
     );
 
 
 const baselineButton =
+
     document.getElementById(
         "baselineButton"
     );
 
 
-const shadowLevelDisplay =
+const measureButton =
+
     document.getElementById(
-        "shadowLevel"
+        "measureButton"
+    );
+
+
+const darkAreaRateDisplay =
+
+    document.getElementById(
+        "darkAreaRate"
+    );
+
+
+const averageDropRateDisplay =
+
+    document.getElementById(
+        "averageDropRate"
+    );
+
+
+const statusDisplay =
+
+    document.getElementById(
+        "status"
+    );
+
+
+const messageDisplay =
+
+    document.getElementById(
+        "message"
     );
 
 
 
-let currentBrightness = 0;
+/* =============================
+   データ
+============================= */
 
-let baselineBrightness = null;
+
+let baselineBrightnessArray =
+    null;
 
 
 
@@ -590,89 +1028,440 @@ let baselineBrightness = null;
 
 async function startCamera() {
 
+
     try {
 
+
         const stream =
+
             await navigator.mediaDevices
                 .getUserMedia({
 
+
                     video: {
 
+
                         facingMode: {
-                            ideal: "environment"
+
+                            ideal:
+                                "environment"
+
                         }
+
 
                     },
 
+
                     audio: false
+
 
                 });
 
 
-        video.srcObject = stream;
+
+        video.srcObject =
+            stream;
+
 
 
         await video.play();
 
 
-        requestAnimationFrame(
-            analyzeBrightness
-        );
 
     }
+
 
     catch(error) {
 
+
         alert(
+
             "カメラを起動できませんでした。\n" +
+
             "カメラの使用を許可してください。"
+
         );
 
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
     }
+
 
 }
 
 
 
 /* =============================
-   輝度計算
+   object-fit: cover 対応
+
+   画面上の評価領域
+   ↓
+   元のカメラ画像座標
 ============================= */
 
 
-function calculateBrightness(
-    imageData
+function screenRectToVideoRect(
+
+    screenRect
+
 ) {
 
+
+    const videoWidth =
+
+        video.videoWidth;
+
+
+    const videoHeight =
+
+        video.videoHeight;
+
+
+    const screenWidth =
+
+        window.innerWidth;
+
+
+    const screenHeight =
+
+        window.innerHeight;
+
+
+
+    const scale =
+
+        Math.max(
+
+            screenWidth /
+            videoWidth,
+
+            screenHeight /
+            videoHeight
+
+        );
+
+
+
+    const displayedWidth =
+
+        videoWidth *
+        scale;
+
+
+    const displayedHeight =
+
+        videoHeight *
+        scale;
+
+
+
+    const cropX =
+
+        (
+
+            displayedWidth -
+
+            screenWidth
+
+        ) / 2;
+
+
+    const cropY =
+
+        (
+
+            displayedHeight -
+
+            screenHeight
+
+        ) / 2;
+
+
+
+    let sourceX =
+
+        (
+
+            screenRect.left +
+
+            cropX
+
+        ) / scale;
+
+
+    let sourceY =
+
+        (
+
+            screenRect.top +
+
+            cropY
+
+        ) / scale;
+
+
+    let sourceWidth =
+
+        screenRect.width /
+        scale;
+
+
+    let sourceHeight =
+
+        screenRect.height /
+        scale;
+
+
+
+    sourceX =
+
+        Math.max(
+
+            0,
+
+            Math.min(
+
+                sourceX,
+
+                videoWidth - 1
+
+            )
+
+        );
+
+
+    sourceY =
+
+        Math.max(
+
+            0,
+
+            Math.min(
+
+                sourceY,
+
+                videoHeight - 1
+
+            )
+
+        );
+
+
+    sourceWidth =
+
+        Math.min(
+
+            sourceWidth,
+
+            videoWidth -
+            sourceX
+
+        );
+
+
+    sourceHeight =
+
+        Math.min(
+
+            sourceHeight,
+
+            videoHeight -
+            sourceY
+
+        );
+
+
+
+    return {
+
+
+        x:
+            sourceX,
+
+
+        y:
+            sourceY,
+
+
+        width:
+            sourceWidth,
+
+
+        height:
+            sourceHeight
+
+
+    };
+
+
+}
+
+
+
+/* =============================
+   評価領域画像を取得
+============================= */
+
+
+function captureEvaluationArea() {
+
+
+    if (
+
+        video.readyState < 2 ||
+
+        video.videoWidth === 0
+
+    ) {
+
+
+        return null;
+
+
+    }
+
+
+
+    const screenRect =
+
+        evaluationArea
+            .getBoundingClientRect();
+
+
+
+    const sourceRect =
+
+        screenRectToVideoRect(
+
+            screenRect
+
+        );
+
+
+
+    canvas.width =
+
+        ANALYSIS_SIZE;
+
+
+    canvas.height =
+
+        ANALYSIS_SIZE;
+
+
+
+    ctx.drawImage(
+
+
+        video,
+
+
+        sourceRect.x,
+
+        sourceRect.y,
+
+        sourceRect.width,
+
+        sourceRect.height,
+
+
+        0,
+
+        0,
+
+        ANALYSIS_SIZE,
+
+        ANALYSIS_SIZE
+
+
+    );
+
+
+
+    return ctx.getImageData(
+
+
+        0,
+
+        0,
+
+        ANALYSIS_SIZE,
+
+        ANALYSIS_SIZE
+
+
+    );
+
+
+}
+
+
+
+/* =============================
+   RGB → 輝度配列
+============================= */
+
+
+function imageDataToBrightnessArray(
+
+    imageData
+
+) {
+
+
     const data =
+
         imageData.data;
 
 
-    let total = 0;
+    const brightnessArray =
 
-    let count = 0;
+        new Float32Array(
+
+            ANALYSIS_SIZE *
+
+            ANALYSIS_SIZE
+
+        );
 
 
-    /*
-    4画素ごとにサンプリング
-    */
+
+    let pixelIndex = 0;
+
+
 
     for (
+
         let i = 0;
+
         i < data.length;
-        i += 16
+
+        i += 4
+
     ) {
 
-        const r = data[i];
 
-        const g = data[i + 1];
-
-        const b = data[i + 2];
+        const r =
+            data[i];
 
 
-        const brightness =
+        const g =
+            data[i + 1];
+
+
+        const b =
+            data[i + 2];
+
+
+
+        brightnessArray[
+            pixelIndex
+        ] =
+
 
             0.2126 * r +
 
@@ -681,325 +1470,23 @@ function calculateBrightness(
             0.0722 * b;
 
 
-        total += brightness;
 
-        count++;
+        pixelIndex++;
 
-    }
-
-
-    return total / count;
-
-}
-
-
-
-/* =============================
-   画面座標
-   ↓
-   video元画像座標へ変換
-
-   object-fit: cover 対応
-============================= */
-
-
-function screenRectToVideoRect(
-    screenRect
-) {
-
-    const videoWidth =
-        video.videoWidth;
-
-
-    const videoHeight =
-        video.videoHeight;
-
-
-    const screenWidth =
-        window.innerWidth;
-
-
-    const screenHeight =
-        window.innerHeight;
-
-
-
-    /*
-    object-fit: cover の倍率
-    */
-
-    const scale = Math.max(
-
-        screenWidth / videoWidth,
-
-        screenHeight / videoHeight
-
-    );
-
-
-
-    /*
-    画面上に表示されている
-    videoの実サイズ
-    */
-
-    const displayedWidth =
-        videoWidth * scale;
-
-
-    const displayedHeight =
-        videoHeight * scale;
-
-
-
-    /*
-    coverによって
-    切り取られた量
-    */
-
-    const cropX =
-
-        (
-            displayedWidth -
-            screenWidth
-        ) / 2;
-
-
-    const cropY =
-
-        (
-            displayedHeight -
-            screenHeight
-        ) / 2;
-
-
-
-    /*
-    評価領域の画面座標
-    ↓
-    video元画像座標
-    */
-
-    let sourceX =
-
-        (
-            screenRect.left +
-            cropX
-        ) / scale;
-
-
-    let sourceY =
-
-        (
-            screenRect.top +
-            cropY
-        ) / scale;
-
-
-    let sourceWidth =
-
-        screenRect.width / scale;
-
-
-    let sourceHeight =
-
-        screenRect.height / scale;
-
-
-
-    /*
-    安全のため範囲制限
-    */
-
-    sourceX =
-        Math.max(
-            0,
-            Math.min(
-                sourceX,
-                videoWidth - 1
-            )
-        );
-
-
-    sourceY =
-        Math.max(
-            0,
-            Math.min(
-                sourceY,
-                videoHeight - 1
-            )
-        );
-
-
-    sourceWidth =
-        Math.min(
-            sourceWidth,
-            videoWidth - sourceX
-        );
-
-
-    sourceHeight =
-        Math.min(
-            sourceHeight,
-            videoHeight - sourceY
-        );
-
-
-    return {
-
-        x: sourceX,
-
-        y: sourceY,
-
-        width: sourceWidth,
-
-        height: sourceHeight
-
-    };
-
-}
-
-
-
-/* =============================
-   リアルタイム解析
-============================= */
-
-
-function analyzeBrightness() {
-
-
-    if (
-
-        video.readyState >= 2 &&
-
-        video.videoWidth > 0 &&
-
-        video.videoHeight > 0
-
-    ) {
-
-
-        /*
-        黄色い評価領域の
-        画面上の位置を取得
-        */
-
-        const screenRect =
-
-            evaluationArea
-                .getBoundingClientRect();
-
-
-
-        /*
-        video元画像上の位置へ変換
-        */
-
-        const sourceRect =
-
-            screenRectToVideoRect(
-                screenRect
-            );
-
-
-
-        /*
-        解析用Canvasは
-        小さめ固定サイズ
-        */
-
-        const analysisWidth = 160;
-
-        const analysisHeight = 160;
-
-
-        canvas.width =
-            analysisWidth;
-
-
-        canvas.height =
-            analysisHeight;
-
-
-
-        /*
-        黄色い枠と一致する領域を
-        Canvasへ描画
-        */
-
-        ctx.drawImage(
-
-            video,
-
-            sourceRect.x,
-
-            sourceRect.y,
-
-            sourceRect.width,
-
-            sourceRect.height,
-
-            0,
-
-            0,
-
-            analysisWidth,
-
-            analysisHeight
-
-        );
-
-
-
-        const imageData =
-
-            ctx.getImageData(
-
-                0,
-
-                0,
-
-                analysisWidth,
-
-                analysisHeight
-
-            );
-
-
-
-        currentBrightness =
-
-            calculateBrightness(
-                imageData
-            );
-
-
-
-        currentBrightnessDisplay
-            .textContent =
-
-            currentBrightness
-                .toFixed(1);
-
-
-
-        updateShadowEvaluation();
 
     }
 
 
 
-    requestAnimationFrame(
-        analyzeBrightness
-    );
+    return brightnessArray;
+
 
 }
 
 
 
 /* =============================
-   基準記録
+   基準画像記録
 ============================= */
 
 
@@ -1011,31 +1498,70 @@ baselineButton
         () => {
 
 
-            baselineBrightness =
+            const imageData =
 
-                currentBrightness;
+                captureEvaluationArea();
 
 
 
-            baselineBrightnessDisplay
+            if (!imageData) {
+
+
+                alert(
+
+                    "カメラ画像を取得できません。"
+
+                );
+
+
+                return;
+
+
+            }
+
+
+
+            baselineBrightnessArray =
+
+                imageDataToBrightnessArray(
+
+                    imageData
+
+                );
+
+
+
+            measureButton.disabled =
+
+                false;
+
+
+
+            darkAreaRateDisplay
                 .textContent =
 
-                baselineBrightness
-                    .toFixed(1);
+                "---";
 
 
-
-            dropRateDisplay
+            averageDropRateDisplay
                 .textContent =
 
-                "0.0 %";
+                "---";
 
 
 
-            shadowLevelDisplay
+            statusDisplay
                 .textContent =
 
-                "基準を記録しました";
+                "② ペン先を十字に合わせて書字姿勢をとり、「測定」を押してください。";
+
+
+
+            messageDisplay
+                .textContent =
+
+                "ペン先を十字に合わせて測定";
+
 
         }
 
@@ -1044,36 +1570,199 @@ baselineButton
 
 
 /* =============================
-   影評価
+   測定
 ============================= */
 
 
-function updateShadowEvaluation() {
+measureButton
+    .addEventListener(
+
+        "click",
+
+        () => {
 
 
-    if (
-        baselineBrightness === null
+            if (
+
+                baselineBrightnessArray ===
+                null
+
+            ) {
+
+
+                return;
+
+
+            }
+
+
+
+            const imageData =
+
+                captureEvaluationArea();
+
+
+
+            if (!imageData) {
+
+
+                alert(
+
+                    "カメラ画像を取得できません。"
+
+                );
+
+
+                return;
+
+
+            }
+
+
+
+            const measuredBrightnessArray =
+
+                imageDataToBrightnessArray(
+
+                    imageData
+
+                );
+
+
+
+            analyzeDifference(
+
+                baselineBrightnessArray,
+
+                measuredBrightnessArray
+
+            );
+
+
+        }
+
+    );
+
+
+
+/* =============================
+   基準画像と測定画像の比較
+============================= */
+
+
+function analyzeDifference(
+
+    baseline,
+
+    measured
+
+) {
+
+
+    let darkPixelCount = 0;
+
+
+    let darkPixelDropTotal = 0;
+
+
+
+    const totalPixelCount =
+
+        baseline.length;
+
+
+
+    for (
+
+        let i = 0;
+
+        i < totalPixelCount;
+
+        i++
+
     ) {
 
-        return;
+
+        const baseBrightness =
+
+            baseline[i];
+
+
+        const measuredBrightness =
+
+            measured[i];
+
+
+
+        /*
+
+        極端に暗い基準画素では
+        割合計算が不安定なので除外
+
+        */
+
+        if (
+
+            baseBrightness < 10
+
+        ) {
+
+
+            continue;
+
+
+        }
+
+
+
+        const dropRate =
+
+
+            (
+
+                baseBrightness -
+
+                measuredBrightness
+
+            )
+
+            /
+
+            baseBrightness;
+
+
+
+        if (
+
+            dropRate >=
+            DARK_THRESHOLD
+
+        ) {
+
+
+            darkPixelCount++;
+
+
+            darkPixelDropTotal +=
+
+                dropRate;
+
+
+        }
+
 
     }
 
 
 
-    let dropRate =
+    const darkAreaRate =
 
-        (
 
-            baselineBrightness -
-
-            currentBrightness
-
-        )
+        darkPixelCount
 
         /
 
-        baselineBrightness
+        totalPixelCount
 
         *
 
@@ -1081,57 +1770,80 @@ function updateShadowEvaluation() {
 
 
 
-    if (dropRate < 0) {
+    let averageDropRate =
 
-        dropRate = 0;
+        0;
+
+
+
+    if (
+
+        darkPixelCount > 0
+
+    ) {
+
+
+        averageDropRate =
+
+
+            darkPixelDropTotal
+
+            /
+
+            darkPixelCount
+
+            *
+
+            100;
+
 
     }
 
 
 
-    dropRateDisplay
+    darkAreaRateDisplay
         .textContent =
 
-        dropRate.toFixed(1) +
+        darkAreaRate
+            .toFixed(1)
+
+        +
+
         " %";
 
 
 
-    if (dropRate < 5) {
+    averageDropRateDisplay
+        .textContent =
 
-        shadowLevelDisplay
-            .textContent =
+        averageDropRate
+            .toFixed(1)
 
-            "影の影響：小";
+        +
 
-    }
-
-
-    else if (dropRate < 15) {
-
-        shadowLevelDisplay
-            .textContent =
-
-            "影の影響：中";
-
-    }
+        " %";
 
 
-    else {
 
-        shadowLevelDisplay
-            .textContent =
+    statusDisplay
+        .textContent =
 
-            "影の影響：大";
+        "測定完了。照明位置を変える場合は、その条件で再度「基準を記録」してください。";
 
-    }
+
+
+    messageDisplay
+        .textContent =
+
+        "測定完了";
+
 
 }
 
 
 
 /* =============================
-   画面回転時
+   画面回転
 ============================= */
 
 
@@ -1141,21 +1853,27 @@ window.addEventListener(
 
     () => {
 
-        /*
-        Safariでレイアウト確定を待つ
-        */
 
         setTimeout(
 
             () => {
 
-                window.scrollTo(0, 0);
+
+                window.scrollTo(
+
+                    0,
+
+                    0
+
+                );
+
 
             },
 
             300
 
         );
+
 
     }
 
@@ -1171,8 +1889,10 @@ window.addEventListener(
 startCamera();
 
 
+
 </script>
 
 
 </body>
+
 </html>
